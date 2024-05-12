@@ -9,7 +9,7 @@ with open("words.txt", "r") as file:
 # Select a random word
 word = random.choice(words)
 guessed = ["_"] * len(word)
-attempts = 6
+attempts = 10
 
 def update_display():
     display_word.set(" ".join(guessed))
