@@ -9,7 +9,7 @@ with open("words.txt", "r") as file:
 # Select a random word
 word = random.choice(words)
 guessed = ["_"] * len(word)
-attempts = 6
+attempts = 10
 
 def update_display():
     display_word.set(" ".join(guessed))
@@ -28,20 +28,37 @@ def guess(letter):
     check_win_loss()
 
 def draw_hangman(attempts):
-    # This function will draw the hangman step by step
-    # For simplicity, it's not implemented in this example
-    pass
+    canvas.delete("hangman")
+    parts = [lambda: canvas.create_line(50, 130, 100, 130, tag="hangman"),
+             lambda: canvas.create_line(75, 130, 75, 30, tag="hangman"),
+             lambda: canvas.create_line(75, 30, 125, 30, tag="hangman"),
+             lambda: canvas.create_line(125, 30, 125, 50, tag="hangman"),
+             lambda: canvas.create_oval(115, 50, 135, 70, tag="hangman"),
+             lambda: canvas.create_line(125, 70, 125, 100, tag="hangman"),
+             lambda: canvas.create_line(125, 80, 105, 90, tag="hangman"),
+             lambda: canvas.create_line(125, 80, 145, 90, tag="hangman"),
+             lambda: canvas.create_line(125, 100, 105, 110, tag="hangman"),
+             lambda: canvas.create_line(125, 100, 145, 110, tag="hangman")]
+    for i in range(len(parts) - attempts):
+        parts[i]()
+
+def display_death_screen():
+    canvas.delete("all")
+    canvas.create_text(100, 60, text="YOU DIED", font=('Helvetica', 30, 'bold'), fill="red", tag="death")
 
 def check_win_loss():
     if "_" not in guessed:
         messagebox.showinfo("Hangman", "You won!")
         root.destroy()
     elif attempts <= 0:
-        messagebox.showinfo("Hangman", f"You lost! The word was: {word}")
-        root.destroy()
+        display_death_screen()
+        root.after(2000, root.destroy)
 
 root = tk.Tk()
 root.title("Hangman Game")
+
+canvas = tk.Canvas(root, width=200, height=200)
+canvas.pack()
 
 display_word = tk.StringVar()
 display_attempts = tk.StringVar()
